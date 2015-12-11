@@ -26,8 +26,8 @@ def make_button(text, xpo, ypo, colour):
 def on_click():
         click_pos = (pygame.mouse.get_pos() [0], pygame.mouse.get_pos() [1])
 
-        if 500 <= click_pos[0] <= 600 and 130 <= click_pos[1] <=230:
-                button(0)
+##        if 550 <= click_pos[0] <= 600 and 155 <= click_pos[1] <=235:
+##                button(0)
 
         if 15 <= click_pos[0] <= 125 and 15 <= click_pos[1] <=50:
                 button(1)
@@ -40,6 +40,9 @@ def on_click():
 
         if 15 <= click_pos[0] <= 125 and 165 <= click_pos[1] <=200:
                 button(4)
+
+        if 15 <= click_pos[0] <= 125 and 215 <= click_pos[1] <=250:
+                button(5)
 
 def camera_viewer():
     print('Press Enter to stream')
@@ -64,15 +67,22 @@ def camera_viewer():
                 image_stream.write(connection.read(image_len))
                 # Rewind the stream, open it as an image with PIL and do some
                 # processing on it
+                
                 image_stream.seek(0)
 ##                        image = Image.open(image_stream)
                 cctv=pygame.image.load(image_stream)
-                screen.blit(cctv,(170,0))
+                screen.blit(cctv,(175,20))
                 pygame.display.flip()
-##                        print('Image is %dx%d' % image.size)
-##                        image.verify()
-##                        print('Image is verified')
+                font2=pygame.font.Font(None,14)
+                label=font2.render("Live CCTV Feed", 1, (red))
+                screen.blit(label,(250,140))
+
+
         finally:
+                pygame.draw.rect(screen, black, (175,20,150,115),0)
+                pygame.display.flip()
+                pygame.draw.rect(screen, blue, (250,140,75,10),0)
+
                 print ("End of camera work")
                 connection.close()
 
@@ -81,19 +91,18 @@ def camera_viewer():
 #define action on pressing buttons
 def button(number):
 
-        if number == 0:    #specific script when exiting
-                screen.fill(black)
-                font=pygame.font.Font(None,36)
-                label=font.render("Good Bye!", 1, (white))
-                screen.blit(label,(105,120))
-                pygame.display.flip()
-                time.sleep(5)
-                sys.exit()
+##        if number == 0:    #specific script when exiting
+##                screen.fill(black)
+##                font=pygame.font.Font(None,36)
+##                label=font.render("Unless you have stopped it camera is running", 1, (white))
+##                screen.blit(label,(105,120))
+##                pygame.display.flip()
+##                time.sleep(5)
+##                sys.exit()
 
         if number == 1:
-                camera_viewer()
-
-
+                switch_on(2)
+                
         if number == 2:
                 switch_off(2)
 
@@ -103,30 +112,36 @@ def button(number):
         if number == 4:
                 switch_off(1)
 
+        if number == 5:
+                camera_viewer()
+
 #set size of the screen
-size = width, height = 640, 240
+size = width, height = 640, 300
 
 #define colours
 blue = 26, 0, 255
 cream = 254, 255, 250
 black = 0, 0, 0
 white = 255, 255, 255
+red = 255,0,0
 
 screen = pygame.display.set_mode(size)
 
 #set up the fixed items on the menu
 screen.fill(blue) #change the colours if needed
-logo=pygame.image.load("logo.tiff")
-exit=pygame.image.load("exit.tiff")
-screen.blit(logo,(510,5))
-screen.blit(exit,(500,130))
-pygame.draw.rect(screen, white, (0,0,640,240),1)
+pygame.draw.rect(screen, white, (0,0,640,300),1)
+pygame.draw.rect(screen, black, (175,20,150,115),0)
+font2=pygame.font.Font(None,14)
+label=font2.render("CCTV Feed", 1, (white))
+screen.blit(label,(175,140))
+                 
 
 #Add buttons and labels
-make_button("Lamp on", 20, 20, white)
-make_button("Lamp off", 20, 70, white)
+make_button("Desk on", 20, 20, white)
+make_button("Desk off", 20, 70, white)
 make_button("XBox360 on", 20, 120, white)
 make_button("XBox 360 off", 20, 170, white)
+make_button("CCTV Stream", 20, 220, white) 
 
 #While loop to manage touch screen inputs
 while 1:
