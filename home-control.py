@@ -71,17 +71,17 @@ def camera_viewer():
                 image_stream.seek(0)
 ##                        image = Image.open(image_stream)
                 cctv=pygame.image.load(image_stream)
-                screen.blit(cctv,(175,20))
+                screen.blit(cctv,(175,15))
                 pygame.display.flip()
                 font2=pygame.font.Font(None,14)
-                label=font2.render("Live CCTV Feed", 1, (red))
-                screen.blit(label,(250,140))
+                label=font2.render("Live", 1, (red))
+                screen.blit(label,(250,267))
 
 
         finally:
-                pygame.draw.rect(screen, black, (175,20,150,115),0)
+                pygame.draw.rect(screen, black, (175,15,326,247),0)
                 pygame.display.flip()
-                pygame.draw.rect(screen, blue, (250,140,75,10),0)
+                pygame.draw.rect(screen, blue, (250,267,75,10),0)
 
                 print ("End of camera work")
                 connection.close()
@@ -130,10 +130,10 @@ screen = pygame.display.set_mode(size)
 #set up the fixed items on the menu
 screen.fill(blue) #change the colours if needed
 pygame.draw.rect(screen, white, (0,0,640,300),1)
-pygame.draw.rect(screen, black, (175,20,150,115),0)
+pygame.draw.rect(screen, black, (175,15,325,246),0)
 font2=pygame.font.Font(None,14)
 label=font2.render("CCTV Feed", 1, (white))
-screen.blit(label,(175,140))
+screen.blit(label,(175,267))
                  
 
 #Add buttons and labels
@@ -154,6 +154,8 @@ while 1:
 
                 if event.type == KEYDOWN:
                         if event.key == K_ESCAPE:
+                                switch_off(1)
+                                switch_off(2)
                                 sys.exit()
         pygame.display.update()
 refresh_menu_screen()  #refresh the menu interface
