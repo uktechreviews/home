@@ -137,11 +137,11 @@ screen.blit(label,(175,267))
                  
 
 #Add buttons and labels
-make_button("Desk on", 20, 20, white)
-make_button("Desk off", 20, 70, white)
-make_button("XBox360 on", 20, 120, white)
-make_button("XBox 360 off", 20, 170, white)
-make_button("CCTV Stream", 20, 220, white) 
+make_button("Mac on", 20, 20, white)
+make_button("Mac off", 20, 70, white)
+make_button("Lights on", 20, 120, white)
+make_button("Lights off", 20, 170, white)
+make_button("Front door", 20, 220, white) 
 
 #While loop to manage touch screen inputs
 while 1:
