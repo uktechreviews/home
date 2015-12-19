@@ -43,7 +43,36 @@ def on_click():
 
         if 15 <= click_pos[0] <= 125 and 215 <= click_pos[1] <=250:
                 button(5)
+                
+        #now check to see if play was pressed
+        if 510 <= click_pos[0] <= 555 and 16 <= click_pos[1] <=65:
+                print ("You pressed button play")
+                button(6)
 
+        #now check to see if stop  was pressed
+        if 565 <= click_pos[0] <= 605 and 16 <= click_pos[1] <=65:
+                print ("You pressed button stop")
+                button(7)
+
+         #now check to see if volume down was pressed
+        if 510 <= click_pos[0] <= 555 and 160 <= click_pos[1] <=200:
+                print ("You pressed volume down")
+                button(8)
+
+         #now check to see if volume up was pressed
+        if 565 <= click_pos[0] <= 605 and 160 <= click_pos[1] <=200:
+                print ("You pressed volume up")
+                button(9)
+
+        #now check to see if previous  was pressed
+        if 510 <= click_pos[0] <= 555 and 75 <= click_pos[1] <=105:
+                print ("You pressed button previous")
+                button(10)
+
+         #now check to see if next  was pressed
+        if 565 <= click_pos[0] <= 605 and 75 <= click_pos[1] <=105:
+                print ("You pressed button next")
+                button(11)
 def camera_viewer():
     print('Press Enter to stream')
     # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0
@@ -71,7 +100,7 @@ def camera_viewer():
                 image_stream.seek(0)
 ##                        image = Image.open(image_stream)
                 cctv=pygame.image.load(image_stream)
-                screen.blit(cctv,(175,15))
+                screen.blit(cctv,(160,14))
                 pygame.display.flip()
                 font2=pygame.font.Font(None,14)
                 label=font2.render("Live", 1, (red))
@@ -79,7 +108,7 @@ def camera_viewer():
 
 
         finally:
-                pygame.draw.rect(screen, black, (175,15,326,247),0)
+                pygame.draw.rect(screen, black, (160,14,326,247),0)
                 pygame.display.flip()
                 pygame.draw.rect(screen, blue, (250,267,75,10),0)
 
@@ -91,32 +120,105 @@ def camera_viewer():
 #define action on pressing buttons
 def button(number):
 
-##        if number == 0:    #specific script when exiting
-##                screen.fill(black)
-##                font=pygame.font.Font(None,36)
-##                label=font.render("Unless you have stopped it camera is running", 1, (white))
-##                screen.blit(label,(105,120))
-##                pygame.display.flip()
-##                time.sleep(5)
-##                sys.exit()
+    if number == 1:
+            switch_on(2)
+            
+    if number == 2:
+            switch_off(2)
 
-        if number == 1:
-                switch_on(2)
-                
-        if number == 2:
-                switch_off(2)
+    if number == 3:
+            switch_on(1)
 
-        if number == 3:
-                switch_on(1)
+    if number == 4:
+            switch_off(1)
 
-        if number == 4:
-                switch_off(1)
+    if number == 5:
+            camera_viewer()
 
-        if number == 5:
-                camera_viewer()
+    if number == 6:	
+            subprocess.call("mpc play ", shell=True)
+
+    if number == 7:
+            subprocess.call("mpc stop ", shell=True)
+
+    if number == 8:
+            subprocess.call("mpc volume -2 ", shell=True)
+  
+    if number == 9:
+            subprocess.call("mpc volume +2 ", shell=True)
+
+    if number == 10:
+            subprocess.call("mpc prev ", shell=True)
+
+    if number == 11:
+            subprocess.call("mpc next ", shell=True)
+
+    pygame.draw.rect(screen, yellow, (163,290, 420, 40),0)
+    station_font=pygame.font.Font(None,20)
+    title_font=pygame.font.Font(None,34)
+    station = subprocess.check_output("mpc current", shell=True )
+    station=str(station)
+    print (station)
+    lines=station.split(":")
+    print (lines)
+    length = len(lines) 
+    if length==1:
+            line1 = lines[0]
+            line2 = "No additional info: "
+    else:
+            line1 = lines[0]
+            line2 = lines[1]
+            
+    line1 = line1.replace("b'", "")
+    line2 = line2[:46]
+    line2 = line2[:-3]
+    print ("line1")
+    print (line1)
+    print ("line2")
+    print (line2)
+    #trap no station data
+    if line1 =="'":
+            line1 = "No Station information available"
+            line2 = "Press PLAY or REFRESH"
+            station_status = "stopped"
+            status_font = red
+    else:
+            station_status = "playing"
+            status_font = green
+    station_name=station_font.render(line1, 1, (red))
+    additional_data=station_font.render(line2, 1, (blue))
+    station_label=title_font.render(station_status, 1, (status_font))
+    screen.blit(station_label,(166,290))
+    screen.blit(station_name,(270,295))
+    screen.blit(additional_data,(270,315))
+    pygame.draw.rect(screen, cream, (504,225, 120, 30),0)
+    
+##    check to see if the Radio is connected to the internet
+    font=pygame.font.Font(None,22)
+    IP = subprocess.check_output("hostname -I", shell=True )
+    IP = str(IP)
+    print (IP)
+    if "10" in IP:
+            network_status = "online"
+            status_font = green
+
+    else:
+            network_status = "offline"
+            status_font = red
+    network_status_label = font.render(network_status, 1, (status_font))
+    screen.blit(network_status_label, (505,230))
+    volume = subprocess.check_output("mpc volume", shell=True )
+    volume = volume[8:]
+    volume = volume[:-1]
+    if volume == "00%":
+            volume = "max"
+    volume_tag=font.render(volume, 1, (black))
+    screen.blit(volume_tag,(560,230))
+    pygame.display.flip()
+
 
 #set size of the screen
-size = width, height = 640, 300
+size = width, height = 640, 350
 
 #define colours
 blue = 26, 0, 255
@@ -124,16 +226,38 @@ cream = 254, 255, 250
 black = 0, 0, 0
 white = 255, 255, 255
 red = 255,0,0
+green = 0,255,0
+yellow = 255, 255, 224
 
 screen = pygame.display.set_mode(size)
 
 #set up the fixed items on the menu
 screen.fill(blue) #change the colours if needed
-pygame.draw.rect(screen, white, (0,0,640,300),1)
-pygame.draw.rect(screen, black, (175,15,325,246),0)
+pygame.draw.rect(screen, white, (0,0,640,350),1)
+pygame.draw.rect(screen, black, (160,14,325,246),0)
 font2=pygame.font.Font(None,14)
 label=font2.render("CCTV Feed", 1, (white))
 screen.blit(label,(175,267))
+#Add radioplayer control
+play=pygame.image.load("play.tiff")
+pause=pygame.image.load("pause.tiff")
+refresh=pygame.image.load("refresh.tiff")
+previous=pygame.image.load("previous.tiff")
+next=pygame.image.load("next.tiff")
+vol_down=pygame.image.load("volume_down.tiff")
+vol_up=pygame.image.load("volume_up.tiff")
+pygame.draw.rect(screen, cream, (504,14,120, 200),0)
+pygame.draw.rect(screen, cream, (504,225, 120, 30),0)
+pygame.draw.rect(screen, blue, (504,145, 120, 10),0)
+pygame.draw.rect(screen, yellow, (163,290, 420, 40),0)
+pygame.draw.rect(screen, white, (585,290,40,40),0)
+screen.blit(play,(510,16))
+screen.blit(previous,(510,75))
+screen.blit(next,(565,75))
+screen.blit(vol_down,(510,160))
+screen.blit(vol_up,(565,160))
+screen.blit(pause,(565,16))
+screen.blit(refresh,(581,294))
                  
 
 #Add buttons and labels
@@ -145,6 +269,7 @@ make_button("Front door", 20, 220, white)
 
 #While loop to manage touch screen inputs
 while 1:
+
         for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                         pos = (pygame.mouse.get_pos() [0], pygame.mouse.get_pos() [1])
