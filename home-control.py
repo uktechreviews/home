@@ -73,6 +73,12 @@ def on_click():
         if 565 <= click_pos[0] <= 605 and 75 <= click_pos[1] <=105:
                 print ("You pressed button next")
                 button(11)
+
+        #now check to see if refresh  was pressed
+        if 581 <= click_pos[0] <= 625 and 294 <= click_pos[1] <=315:
+                print ("You pressed button refresh")
+                button(12)
+                 
 def camera_viewer():
     print('Press Enter to stream')
     # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0
@@ -218,7 +224,7 @@ def button(number):
 
 
 #set size of the screen
-size = width, height = 640, 350
+size = width, height = 790, 390
 
 #define colours
 blue = 26, 0, 255
@@ -233,7 +239,7 @@ screen = pygame.display.set_mode(size)
 
 #set up the fixed items on the menu
 screen.fill(blue) #change the colours if needed
-pygame.draw.rect(screen, white, (0,0,640,350),1)
+pygame.draw.rect(screen, white, (0,0,790,390),1)
 pygame.draw.rect(screen, black, (160,14,325,246),0)
 font2=pygame.font.Font(None,14)
 label=font2.render("CCTV Feed", 1, (white))
