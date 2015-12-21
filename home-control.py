@@ -8,12 +8,29 @@ import io
 import socket
 import struct
 from PIL import Image
+import string
 
 
 os.environ["SDL_FBDEV"] = "/dev/fb1"
 os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"
 os.environ["SDL_MOUSEDRV"] = "TSLIB"
 pygame.init()
+
+def show_playlist():
+        play_list = subprocess.check_output("mpc playlist", shell=True )
+        play_list = str(play_list)
+        play_list = play_list[2:]
+        play_list = play_list[:-1]
+        plays = play_list.split("\\n")
+        font2=pygame.font.Font(None,18)
+        offset = 0
+        for play in plays:
+                print (play)
+                play = play[:45]
+                label=font2.render(play, 1, (white))
+                screen.blit(label,(160,16+offset))
+                offset +=20
+
 
 #define function for printing text in a specific place and with a specific colour and adding a border
 def make_button(text, xpo, ypo, colour):
@@ -77,7 +94,7 @@ def on_click():
         #now check to see if refresh  was pressed
         if 581 <= click_pos[0] <= 625 and 294 <= click_pos[1] <=315:
                 print ("You pressed button refresh")
-                button(12)
+                show_playlist()
                  
 def camera_viewer():
     print('Press Enter to stream')
@@ -159,6 +176,7 @@ def button(number):
     if number == 11:
             subprocess.call("mpc next ", shell=True)
 
+
     pygame.draw.rect(screen, yellow, (163,290, 420, 40),0)
     station_font=pygame.font.Font(None,20)
     title_font=pygame.font.Font(None,34)
@@ -176,7 +194,8 @@ def button(number):
             line2 = lines[1]
             
     line1 = line1.replace("b'", "")
-    line2 = line2[:46]
+    line1 = line1[:45]
+    line2 = line2[:45]
     line2 = line2[:-3]
     print ("line1")
     print (line1)
