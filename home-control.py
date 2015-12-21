@@ -16,7 +16,36 @@ os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"
 os.environ["SDL_MOUSEDRV"] = "TSLIB"
 pygame.init()
 
+def status():
+  pygame.draw.rect(screen, black, (160,14,325,246),0)
+  uptime = subprocess.check_output("uptime", shell=True )
+  uptime = str(uptime)
+  uptime = uptime[3:]
+  uptime = uptime[:-4]
+  font2=pygame.font.Font(None,18)
+  ups = uptime.split("load")
+  print (ups[0])
+  label=font2.render(ups[0], 1, (white))
+  screen.blit(label,(160,16))  
+
+  hostname = subprocess.check_output("hostname -I", shell=True )
+  hostname = str(hostname)
+  hostname = hostname[2:]
+  hostname = hostname[:-4]
+  print (hostname)
+  label2=font2.render(hostname, 1, (white))
+  screen.blit(label2,(160,36)) 
+
+  pi_temp = subprocess.check_output("/opt/vc/bin/vcgencmd measure_temp", shell=True )
+  pi_temp = str(pi_temp)
+  pi_temp = pi_temp[2:]
+  pi_temp = pi_temp[:-5]
+  print (pi_temp)
+  label3=font2.render(pi_temp, 1, (white))
+  screen.blit(label3,(160,56))
+
 def show_playlist():
+        pygame.draw.rect(screen, black, (160,14,325,246),0)
         play_list = subprocess.check_output("mpc playlist", shell=True )
         play_list = str(play_list)
         play_list = play_list[2:]
@@ -60,6 +89,10 @@ def on_click():
 
         if 15 <= click_pos[0] <= 125 and 215 <= click_pos[1] <=250:
                 button(5)
+
+        #now check to see if status was pressed
+        if 15 <= click_pos[0] <= 125 and 265 <= click_pos[1] <=300:
+                button(12)
                 
         #now check to see if play was pressed
         if 510 <= click_pos[0] <= 555 and 16 <= click_pos[1] <=65:
@@ -143,6 +176,9 @@ def camera_viewer():
 #define action on pressing buttons
 def button(number):
 
+    if number == 12:
+            status()
+            
     if number == 1:
             switch_on(2)
             
@@ -271,18 +307,20 @@ previous=pygame.image.load("previous.tiff")
 next=pygame.image.load("next.tiff")
 vol_down=pygame.image.load("volume_down.tiff")
 vol_up=pygame.image.load("volume_up.tiff")
+playlist=pygame.image.load("playlist.png")
 pygame.draw.rect(screen, cream, (504,14,120, 200),0)
 pygame.draw.rect(screen, cream, (504,225, 120, 30),0)
 pygame.draw.rect(screen, blue, (504,145, 120, 10),0)
-pygame.draw.rect(screen, yellow, (163,290, 420, 40),0)
-pygame.draw.rect(screen, white, (585,290,40,40),0)
+pygame.draw.rect(screen, yellow, (163,290, 420, 50),0)
+pygame.draw.rect(screen, white, (585,290,50,50),0)
 screen.blit(play,(510,16))
 screen.blit(previous,(510,75))
 screen.blit(next,(565,75))
 screen.blit(vol_down,(510,160))
 screen.blit(vol_up,(565,160))
 screen.blit(pause,(565,16))
-screen.blit(refresh,(581,294))
+screen.blit(playlist,(586,290))
+screen.blit(refresh,(740,340))
                  
 
 #Add buttons and labels
@@ -290,7 +328,8 @@ make_button("Mac on", 20, 20, white)
 make_button("Mac off", 20, 70, white)
 make_button("Lights on", 20, 120, white)
 make_button("Lights off", 20, 170, white)
-make_button("Front door", 20, 220, white) 
+make_button("Front door", 20, 220, white)
+make_button("Status",20, 270, white)
 
 #While loop to manage touch screen inputs
 while 1:
