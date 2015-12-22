@@ -16,6 +16,24 @@ os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"
 os.environ["SDL_MOUSEDRV"] = "TSLIB"
 pygame.init()
 
+def weather():
+        print ("Collecting weather for EGBB")
+        print ("This can take upto 30 seconds")
+##Add your own location in the line below
+        weather = subprocess.check_output("weather EGBB", shell=True )
+        print ("Weather found")
+        weather = str(weather)
+        weather = weather[2:]
+        weather = weather[:-1]
+        weather = weather.split("\\n")
+        offset = 20
+        for weathers in weather:
+                weathers = weathers[:45]
+                print (weathers)
+                label=font2.render(weathers, 1, (white))
+                screen.blit(label,(160,16+offset))
+                offset +=20
+
 def status():
   pygame.draw.rect(screen, black, (160,14,325,246),0)
   uptime = subprocess.check_output("uptime", shell=True )
@@ -43,6 +61,34 @@ def status():
   print (pi_temp)
   label3=font2.render(pi_temp, 1, (white))
   screen.blit(label3,(160,56))
+
+  ping_status = subprocess.getoutput("ping -c 1 10.0.1.6")
+  if "error" in ping_status:
+    error = "You can't get to the remote camera"
+    label4=font2.render(error, 1, (red))
+    screen.blit(label4,(160,76))
+  else:
+    text = "The camera is cuurently connected"
+    label4=font2.render(text, 1, (white))
+    screen.blit(label4,(160,76))
+
+def shut_down():
+  pygame.draw.rect(screen, red, (160,14,325,246),0)
+  font5=pygame.font.Font(None,24)
+  error = "MPC and Lights switched off"
+  label4=font5.render(error, 1, (white))
+  screen.blit(label4,(160,16))
+  subprocess.call("mpc stop ", shell=True)
+  switch_off(1)
+  error = "The system will shut down in 2 minutes"
+  label4=font5.render(error, 1, (white))
+  screen.blit(label4,(160,46))
+  error = "Please unplug once the Pi is switched off"
+  label4=font5.render(error, 1, (white))
+  screen.blit(label4,(160,66))
+  subprocess.call("mpc stop ", shell=True)
+  subprocess.call("sudo shutdown -h +2 ", shell=True)
+  
 
 def show_playlist():
         pygame.draw.rect(screen, black, (160,14,325,246),0)
@@ -90,6 +136,12 @@ def on_click():
         if 15 <= click_pos[0] <= 125 and 215 <= click_pos[1] <=250:
                 button(5)
 
+        if 15 <= click_pos[0] <= 125 and 295 <= click_pos[1] <=355:
+                button(13)
+
+        if 655 <= click_pos[0] <= 765 and 15 <= click_pos[1] <=50:
+                button(14)
+                
         #now check to see if status was pressed
         if 15 <= click_pos[0] <= 125 and 265 <= click_pos[1] <=300:
                 button(12)
@@ -128,9 +180,25 @@ def on_click():
         if 581 <= click_pos[0] <= 625 and 294 <= click_pos[1] <=315:
                 print ("You pressed button refresh")
                 show_playlist()
-                 
+
+def check_cam_IP():
+  pygame.draw.rect(screen, black, (160,14,326,247),0)
+  ping_status = subprocess.getoutput("ping -c 1 10.0.1.6")
+  print (ping_status) #Take this out later
+  if "error" in ping_status:
+    error_cam=pygame.image.load("error.png")
+    screen.blit(error_cam,(160,14))
+    print ("You can't get to the remote camera")
+    error = "Camera Network Error"
+    font3=pygame.font.Font(None,30)
+    label4=font3.render(error, 1, (blue))
+    screen.blit(label4,(200,100))
+    return
+  else:
+    camera_viewer()
+
 def camera_viewer():
-    print('Press Enter to stream')
+    print('I am happy that there is a camera connection')
     # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0
     # means all interfaces)
     with socket.socket() as server_socket:
@@ -176,6 +244,9 @@ def camera_viewer():
 #define action on pressing buttons
 def button(number):
 
+    if number == 13:
+            shut_down()
+
     if number == 12:
             status()
             
@@ -192,7 +263,7 @@ def button(number):
             switch_off(1)
 
     if number == 5:
-            camera_viewer()
+            check_cam_IP()
 
     if number == 6:	
             subprocess.call("mpc play ", shell=True)
@@ -211,6 +282,10 @@ def button(number):
 
     if number == 11:
             subprocess.call("mpc next ", shell=True)
+
+    if number == 14:
+        pygame.draw.rect(screen, black, (160,14,325,246),0)
+        weather()
 
 
     pygame.draw.rect(screen, yellow, (163,290, 420, 40),0)
@@ -280,6 +355,7 @@ def button(number):
 
 #set size of the screen
 size = width, height = 790, 390
+subprocess.call("mpc stop ", shell=True)
 
 #define colours
 blue = 26, 0, 255
@@ -330,6 +406,8 @@ make_button("Lights on", 20, 120, white)
 make_button("Lights off", 20, 170, white)
 make_button("Front door", 20, 220, white)
 make_button("Status",20, 270, white)
+make_button("Shutdown",20, 320, red)
+make_button("Weather", 660,20, white)
 
 #While loop to manage touch screen inputs
 while 1:
