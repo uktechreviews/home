@@ -17,22 +17,31 @@ os.environ["SDL_MOUSEDRV"] = "TSLIB"
 pygame.init()
 
 def weather():
+        text = "This can take 30 seconds"
+        font6=pygame.font.Font(None,18)
+        label=font6.render(text, 1, (red))
+        screen.blit(label,(160,16))
+        pygame.display.flip()
         print ("Collecting weather for EGBB")
         print ("This can take upto 30 seconds")
 ##Add your own location in the line below
-        weather = subprocess.check_output("weather EGBB", shell=True )
+        weather = subprocess.check_output("weather -q EGBB", shell=True )
         print ("Weather found")
         weather = str(weather)
         weather = weather[2:]
         weather = weather[:-1]
+        weather = weather.replace("(", "")
+        weather = weather.replace(")", "")
         weather = weather.split("\\n")
         offset = 20
         for weathers in weather:
-                weathers = weathers[:45]
-                print (weathers)
-                label=font2.render(weathers, 1, (white))
-                screen.blit(label,(160,16+offset))
-                offset +=20
+                displays = weathers.split("KT")
+                for display in displays:         
+                        display = display[:60]
+                        print (display)
+                        label=font6.render(display, 1, (white))
+                        screen.blit(label,(160,16+offset))
+                        offset +=20
 
 def status():
   pygame.draw.rect(screen, black, (160,14,325,246),0)
@@ -378,7 +387,7 @@ screen.blit(label,(175,267))
 #Add radioplayer control
 play=pygame.image.load("play.tiff")
 pause=pygame.image.load("pause.tiff")
-refresh=pygame.image.load("refresh.tiff")
+logo2=pygame.image.load("logo2.png")
 previous=pygame.image.load("previous.tiff")
 next=pygame.image.load("next.tiff")
 vol_down=pygame.image.load("volume_down.tiff")
@@ -396,7 +405,7 @@ screen.blit(vol_down,(510,160))
 screen.blit(vol_up,(565,160))
 screen.blit(pause,(565,16))
 screen.blit(playlist,(586,290))
-screen.blit(refresh,(740,340))
+screen.blit(logo2,(580,340))
                  
 
 #Add buttons and labels
