@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sys, pygame
 from pygame.locals import *
 import time
