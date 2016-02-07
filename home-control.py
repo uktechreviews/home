@@ -17,6 +17,8 @@ os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"
 os.environ["SDL_MOUSEDRV"] = "TSLIB"
 pygame.init()
 
+pygame.display.set_caption("DeskMate2000")
+
 def weather():
         text = "This can take 30 seconds"
         font6=pygame.font.Font(None,18)
